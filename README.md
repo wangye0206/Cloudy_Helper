@@ -1,6 +1,6 @@
 # Cloudy_Helper
 
-Some useful [Cloudy](http://www.nublado.org/) (Ferland et al. 2013) outputs manage scripts
+Some useful [Cloudy](http://www.nublado.org/) (Ferland et al. 2013) outputs management scripts
 
 ## Direction
 
@@ -10,4 +10,4 @@ details of each script, please read introduction at beginning of each script.
 ## List
 
 DataGather.py -- Used to merge temporary files generate by 'grid'
-command into a whole file.
+command into whole file.
