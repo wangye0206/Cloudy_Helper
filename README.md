@@ -5,7 +5,8 @@ Some useful [Cloudy](http://www.nublado.org/) (Ferland et al. 2013) outputs mana
 ## Direction
 
 List section provides name of scripts and their applications. For
-details of each script, please read introduction at beginning of each script.
+details of each script, please read introduction at beginning of each
+script. Please make sure you have latest Python3 to run these script.
 
 ## List
 
