@@ -10,5 +10,7 @@ script. Please make sure you have latest Python3 to run these script.
 
 ## List
 
+CoolingFunction -- Example code used to show analytic fit functions (cooling
+function and cooling rate) in Wang et al. (2013)
 DataGather.py -- Used to merge temporary files generate by 'grid'
 command into whole file.

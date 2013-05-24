@@ -11,7 +11,7 @@
 # since that file may very big.                                         # 
 #########################################################################
 
-import sys, threading, os, glob
+import sys, threading, os
 
 class Process(threading.Thread):
     def __init__(self):
