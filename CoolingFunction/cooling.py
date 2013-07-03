@@ -22,7 +22,7 @@ def CoolingFunction(T, n, Z):
     # electron density/hydrogen density at solar abudance and
     # fully ionized status, value here derived with abundance
     # GASS discribed in CLOUDY */
-    HIGH_T_ELECTRON_FRACTION = 1.1972
+    HIGH_T_ELECTRON_FRACTION = 1.1792
 
 
     # Eq 6 of Wang et al. 2013 

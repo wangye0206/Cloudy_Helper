@@ -21,7 +21,7 @@ const float ELECTRON_MASS = 9.10938291e-28;
 /* electron density/hydrogen density at solar abudance and
  * fully ionized status, value here derived with abundance
  * GASS discribed in CLOUDY */
-const float HIGH_T_ELECTRON_FRACTION = 1.1972;
+const float HIGH_T_ELECTRON_FRACTION = 1.1792;
 
 float CoolingFunction(float T, float n, float Z);
 
