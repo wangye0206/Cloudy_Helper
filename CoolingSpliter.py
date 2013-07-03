@@ -68,7 +68,7 @@ def main():
 
     print('Calculating')
     points = 1000
-    ThreadNum = 1 + int(len( OvrLines ) / points)
+    ThreadNum = 1 + (len( OvrLines ) // points)
     Threads = []
     for t in range(ThreadNum):
         if( t == (ThreadNum - 1 ) ):
