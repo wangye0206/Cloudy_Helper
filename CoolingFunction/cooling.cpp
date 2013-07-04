@@ -1,36 +1,10 @@
-#include "stdio.h"
-#include "math.h"
-
-/* Replace these constants with yours, if you have difined them in your code */
-
-/* Thomson cross-section, cm^2 */
-const float THOMSON_CROSS_SECTION = 6.65e-25;
-
-/* light speed, cm/s */
-const float LIGHT_SPEED = 2.99792458e10;
-
-/* fine structure constant */
-const float FINE_STRUCTURE_CONSTANT = 7.2973525698e-3;
-
-/* boltzmann constant, erg/K */
-const float BOLTZMANN_CONSTANT = 1.3806488e-16;
-
-/* electron mass, gram */
-const float ELECTRON_MASS = 9.10938291e-28;
-
-/* electron density/hydrogen density at solar abudance and
- * fully ionized status, value here derived with abundance
- * GASS discribed in CLOUDY */
-const float HIGH_T_ELECTRON_FRACTION = 1.1792;
-
-float CoolingFunction(float T, float n, float Z);
-
-float CoolingRate(float T, float n, float Z);
+#include "cooling.h"
 
 /* Calculate Cooling Function */
-float CoolingFunction(float T, float n, float Z)
+float Cooling::CoolingFunction(float T, float n, float Z)
 {
-
+	using namespace Cooling;
+	
 	float Lambda;
 
 	/* Eq 6 of Wang et al. 2013 */
@@ -103,8 +77,10 @@ float CoolingFunction(float T, float n, float Z)
 	return Lambda;
 }
 
-float CoolingRate(float T, float n, float Z)
+float Cooling::CoolingRate(float T, float n, float Z)
 {
+	using namespace Cooling;
+	
 	float rate;
 	float Lambda = CoolingFunction(T, n, Z);
 
@@ -122,28 +98,4 @@ float CoolingRate(float T, float n, float Z)
 	rate = E * M * pow(pow(10,n),2) * Lambda;
 
 	return rate;
-}
-
-/* This is a example to show how to use CoolingFunction and CoolingRate */
-
-int main()
-{
-	/* Temperature, K */
-	float temperature = 1e7;
-
-	/* Hydrogen Density log10(n_H) */
-	float density = 10;
-
-	/* Metallicity, Z_sun */
-	float metallicity = 15;
-
-	/* Cooling Function, erg s-1 cm3 */
-	float Lambda = CoolingFunction(temperature, density, metallicity);
-
-	/* Cooling Rate, erg s-1 cm-3 */
-	float L = CoolingRate(temperature, density, metallicity);
-
-	printf("T = %f, n = %f, Z = %f, Lambda = %e, L = %e\n", temperature, density, metallicity, Lambda, L);
-	
-	return 0;
 }
