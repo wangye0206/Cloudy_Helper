@@ -1,9 +1,12 @@
 #include "stdio.h"
 #include "math.h"
 
+/* to avoid name corruption, all variables and funcitons are
+ * using namespace 'Cooling' now */
 namespace Cooling
 {
-	/* Replace these constants with yours, if you have difined them in your code */
+	/* Replace these constants with yours, if you have difined
+	 * them in your code */
 	/* Thomson cross-section, cm^2 */
 	const float THOMSON_CROSS_SECTION = 6.65e-25;
 	
