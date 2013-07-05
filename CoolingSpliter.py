@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+# This script need 2 CLOUDY outputs: overview and cooling each
+# to get those outputs add 'save overview "model_name.ovr" '
+# and 'save cooling each "model_name.cole" in your CLOUDY input
+# To get splitted cooling function, put those 2 outputs in same
+# directory with this script and run this script following
+# with the model_name. 
+
+# WARNING: use CLOUDY's WangYe branch to get cooling each data
+#          other version may lead to a incorrect result
+
 import sys, os, math, queue, threading
 
 def Process(Cole, Ovr):

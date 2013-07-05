@@ -1,3 +1,6 @@
+#ifndef COOLING_WANG13_H
+#define COOLING_WANG13_H
+
 #include "stdio.h"
 #include "math.h"
 
@@ -33,3 +36,4 @@ namespace Cooling
 	/* CoolingRate return cooling rate in unit of erg cm-3 s-1 */
 	float CoolingRate(float T, float n, float Z);
 }
+#endif
