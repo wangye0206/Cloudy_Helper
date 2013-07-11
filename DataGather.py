@@ -43,8 +43,11 @@ class Process(threading.Thread):
                 SubFile = open('{0}grid{1:09d}_{2}'.format(self.SubFilePath, FileSequence, self.FileName), 'r')
                 Lines = SubFile.readlines()
                 SubFile.close()
-                for LineNum in range(0, len(Lines)):
-                    Data.append(Lines[LineNum])
+                if (len(Lines) == 0):
+                    Data.append('\n')
+                else:
+                    for LineNum in range(0, len(Lines)):
+                        Data.append(Lines[LineNum])
                 FileNum += 1
                 Check = 0
             else:
