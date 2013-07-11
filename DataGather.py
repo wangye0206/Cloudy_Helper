@@ -14,8 +14,10 @@
 import sys, threading, os
 
 class Process(threading.Thread):
-    def __init__(self):
+    def __init__(self, SubFilePath, FileName):
         threading.Thread.__init__(self)
+        self.SubFilePath = SubFilePath
+        self.FileName = FileName
 
     def run(self):
         print('Thread \'{}\' start!'.format(self.FileName))
@@ -25,6 +27,16 @@ class Process(threading.Thread):
         FileSequence = 0
         Check = 0
         Data = []
+
+        if( self.FileName.find('.out') == -1 ):
+            TitleFile = open('{0}{1}'.format(self.SubFilePath, self.FileName))
+            TitleLines = TitleFile.readlines()
+            TitleFile.close()
+            if( TitleLines == 0 ):
+                print('{0} title is missing'.format(self.FileName))
+            else:
+                for TitleLineNum in range(0, len(TitleLines)):
+                    Data.append(TitleLines[TitleLineNum])
 
         while( FileExist == 1 ) :
             if( os.path.exists('{0}grid{1:09d}_{2}'.format(self.SubFilePath, FileSequence, self.FileName)) ):
@@ -76,10 +88,8 @@ def main():
     
     threads = []
     for i in Files:
-        thread_i = Process()
+        thread_i = Process(Path,i)
         threads += [thread_i]
-        thread_i.FileName = i
-        thread_i.SubFilePath = Path
         thread_i.start()
 
     for t in threads:
