@@ -80,6 +80,7 @@ def main():
     while( i < len(ColeLines) ):
         if( ColeLines[i].find('not converged') != -1):
             del ColeLines[i]
+            ColeLines[i] = '\n'
         i = i + 1
     if( len(ColeLines) != len(OvrLines) ):
         sys.exit('ERROR: Two original files do not contian same amount of points!')
