@@ -11,7 +11,11 @@
 # since that file may very big.                                         # 
 #########################################################################
 
-import sys, threading, os
+import sys, threading, os, queue
+
+Missing_Queue = queue.PriorityQueue()
+Blank_Queue = queue.PriorityQueue()
+Info_Queue = queue.Queue()
 
 class Process(threading.Thread):
     def __init__(self, SubFilePath, FileName):
@@ -25,6 +29,8 @@ class Process(threading.Thread):
         FileExist = 1
         FileNum = 0
         FileSequence = 0
+        CurrentExistFile = 0
+        PreviousExistFile = -1
         Check = 0
         Data = []
 
@@ -33,18 +39,29 @@ class Process(threading.Thread):
             TitleLines = TitleFile.readlines()
             TitleFile.close()
             if( TitleLines == 0 ):
-                print('{0} title is missing'.format(self.FileName))
+                Info_Queue.put('{0} column labels may be missed!\nCheck gathered file to see whether column labels exist.'.format(self.FileName))
             else:
                 for TitleLineNum in range(0, len(TitleLines)):
                     Data.append(TitleLines[TitleLineNum])
 
         while( FileExist == 1 ) :
             if( os.path.exists('{0}grid{1:09d}_{2}'.format(self.SubFilePath, FileSequence, self.FileName)) ):
+                ## Check if files are missing
+                CurrentExistFile = FileSequence
+                while( (CurrentExistFile - PreviousExistFile) != 1 ):
+                    Data.append('\n')
+                    PreviousExistFile = 1 + PreviousExistFile
+                    Missing_Queue.put(['{}'.format(self.FileName),'grid{0:09d}_{1}'.format(PreviousExistFile, self.FileName)])
+                    if( PreviousExistFile == 0 ):
+                        Info_Queue.put('{0} column labels may be missed!\nCheck gathered file to see whether column labels exist.'.format(self.FileName))
+                PreviousExistFile = FileSequence
+                
                 SubFile = open('{0}grid{1:09d}_{2}'.format(self.SubFilePath, FileSequence, self.FileName), 'r')
                 Lines = SubFile.readlines()
                 SubFile.close()
                 if (len(Lines) == 0):
                     Data.append('\n')
+                    Blank_Queue.put(['{}'.format(self.FileName), 'grid{0:09d}_{1}'.format(FileSequence, self.FileName)])
                 else:
                     for LineNum in range(0, len(Lines)):
                         Data.append(Lines[LineNum])
@@ -97,6 +114,23 @@ def main():
 
     for t in threads:
         t.join()
+
+    if(not Missing_Queue.empty()):
+        print('\nFollowing files are missing:')
+    while(not Missing_Queue.empty()):
+        MissFileTempList = Missing_Queue.get()
+        print('{}'.format(MissFileTempList[1]))
+
+    if(not Blank_Queue.empty()):
+        print('\nFollowing files are blank:')
+    while(not Blank_Queue.empty()):
+        BlankFileTempList = Blank_Queue.get()
+        print('{}'.format(BlankFileTempList[1]))
+
+    if(not Info_Queue.empty()):
+        print()
+    while(not Info_Queue.empty()):
+        print(Info_Queue.get())
 
 if __name__ == '__main__':
     main()
