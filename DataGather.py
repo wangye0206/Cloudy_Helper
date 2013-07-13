@@ -17,6 +17,72 @@ Missing_Queue = queue.PriorityQueue()
 Blank_Queue = queue.PriorityQueue()
 Info_Queue = queue.Queue()
 
+# 1 means labels locates at single file, 2 means labels are at grid files, 0 means labels are missing
+def CheckColumnLabel( SubFilePath, FileName ):
+    if( os.path.exists('{0}{1}'.format(SubFilePath, FileName))):
+        File = open('{0}{1}'.format(SubFilePath, FileName), 'r')
+        Line = File.readline()
+        File.close()
+        if( len(Line) != 0 ):
+            return 1
+    if( os.path.exists('{0}grid000000000_{1}'.format( SubFilePath, FileName ))):
+        return 2
+    else:
+        return 0
+
+ # LabelStatus comes from CheckColumnLabel, return number of files gathered and gathered data (a list of string)  
+def GatherFile( SubFilePath, FileName, LabelStatus ):
+    Data = []
+    if( LabelStatus == 1 ):
+        LabelFile = open('{0}{1}'.format(SubFilePath, FileName), 'r')
+        LabelLine = LabelFile.readlines()
+        LabelFile.close()
+        for i in LabelLine:
+            Data.append(i)
+
+    FileExist = 1
+    FileNum = 0
+    FileSequence = 0
+    CurrentExistFile = 0
+    PreviousExistFile = -1
+    Check = 0
+                        
+    while( FileExist == 1 ) :
+        if( os.path.exists('{0}grid{1:09d}_{2}'.format(SubFilePath, FileSequence, FileName)) ):
+            ## Check if files are missing
+            CurrentExistFile = FileSequence
+            while( (CurrentExistFile - PreviousExistFile) != 1 ):
+                Data.append('\n')
+                PreviousExistFile = 1 + PreviousExistFile
+                Missing_Queue.put(['{}'.format(FileName),'grid{0:09d}_{1}'.format(PreviousExistFile, FileName)])
+            PreviousExistFile = FileSequence
+                
+            SubFile = open('{0}grid{1:09d}_{2}'.format(SubFilePath, FileSequence, FileName), 'r')
+            Lines = SubFile.readlines()
+            SubFile.close()
+            if (len(Lines) == 0):
+                Data.append('\n')
+                Blank_Queue.put(['{}'.format(FileName), 'grid{0:09d}_{1}'.format(FileSequence, FileName)])
+            else:
+                for LineNum in range(0, len(Lines)):
+                    Data.append(Lines[LineNum])
+            FileNum += 1
+            Check = 0
+        else:
+            Check += 1
+            if( Check == 1000 ):
+                FileExist = 0
+        FileSequence += 1
+
+    return [FileNum, Data]
+
+        
+def ExportData( Data, FileName ):
+    File = open('./{}'.format(FileName), 'w')
+    for i in Data:
+        File.write('{}'.format(i))
+    File.close()        
+
 class Process(threading.Thread):
     def __init__(self, SubFilePath, FileName):
         threading.Thread.__init__(self)
@@ -25,63 +91,23 @@ class Process(threading.Thread):
 
     def run(self):
         print('Thread \'{}\' start!'.format(self.FileName))
-        
-        FileExist = 1
-        FileNum = 0
-        FileSequence = 0
-        CurrentExistFile = 0
-        PreviousExistFile = -1
-        Check = 0
-        Data = []
 
-        if( self.FileName.find('.out') == -1 ):
-            TitleFile = open('{0}{1}'.format(self.SubFilePath, self.FileName))
-            TitleLines = TitleFile.readlines()
-            TitleFile.close()
-            if( TitleLines == 0 ):
-                Info_Queue.put('{0} column labels may be missed!\nCheck gathered file to see whether column labels exist.'.format(self.FileName))
-            else:
-                for TitleLineNum in range(0, len(TitleLines)):
-                    Data.append(TitleLines[TitleLineNum])
-
-        while( FileExist == 1 ) :
-            if( os.path.exists('{0}grid{1:09d}_{2}'.format(self.SubFilePath, FileSequence, self.FileName)) ):
-                ## Check if files are missing
-                CurrentExistFile = FileSequence
-                while( (CurrentExistFile - PreviousExistFile) != 1 ):
-                    Data.append('\n')
-                    PreviousExistFile = 1 + PreviousExistFile
-                    Missing_Queue.put(['{}'.format(self.FileName),'grid{0:09d}_{1}'.format(PreviousExistFile, self.FileName)])
-                    if( PreviousExistFile == 0 ):
-                        Info_Queue.put('{0} column labels may be missed!\nCheck gathered file to see whether column labels exist.'.format(self.FileName))
-                PreviousExistFile = FileSequence
-                
-                SubFile = open('{0}grid{1:09d}_{2}'.format(self.SubFilePath, FileSequence, self.FileName), 'r')
-                Lines = SubFile.readlines()
-                SubFile.close()
-                if (len(Lines) == 0):
-                    Data.append('\n')
-                    Blank_Queue.put(['{}'.format(self.FileName), 'grid{0:09d}_{1}'.format(FileSequence, self.FileName)])
-                else:
-                    for LineNum in range(0, len(Lines)):
-                        Data.append(Lines[LineNum])
-                FileNum += 1
-                Check = 0
-            else:
-                Check += 1
-                if( Check == 1000 ):
-                    FileExist = 0
-            FileSequence += 1
-
-        File = open('./{}'.format(self.FileName), 'w')
-        for i in Data:
-            File.write('{}'.format(i))
-        File.close()
-
-        if( FileNum == 0 ):
-            print('ERROR: I cannot find any {} file, please check path!'.format(self.FileName))
+        if( self.FileName.find('.out') == -1):
+            LabelStatus = CheckColumnLabel(self.SubFilePath, self.FileName)
         else:
-            print('Thread \'{0}\' finished! {1} files are merged together'.format(self.FileName, FileNum))
+            LabelStatus = 2
+        GatheredInfo = GatherFile(self.SubFilePath, self.FileName, LabelStatus)
+
+        if( GatheredInfo[0] == 0 ):
+            print('ERROR: I cannot find any {} file, please check path!'.format(self.FileName))
+            return 0
+            
+        if( LabelStatus == 0 ):
+             Info_Queue.put('{0} column labels may be missed!\nCheck gathered file to see whether column labels exist.'.format(self.FileName))
+             
+        ExportData( GatheredInfo[1], self.FileName )
+        print('Thread \'{0}\' finished! {1} files are merged together'.format(self.FileName, GatheredInfo[0]))
+     
         return 0
 
         
@@ -114,7 +140,8 @@ def main():
 
     for t in threads:
         t.join()
-
+        
+    # Export error info
     if(not Missing_Queue.empty()):
         print('\nFollowing files are missing:')
     while(not Missing_Queue.empty()):
