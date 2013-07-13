@@ -59,6 +59,10 @@ class CalThread(threading.Thread):
 
 def main():
 
+    if(len(sys.argv) == 1):
+        sys.exit('Please provide model name!')
+    if(len(sys.argv) > 2):
+        sys.exit('I can ongly due with one model at same time, sorry!')
     ModelName = sys.argv[1]
     if( not os.path.exists('./{}.cole'.format(ModelName))):
         sys.exit('ERROR: I can not find cole file!')
