@@ -17,5 +17,9 @@ CoolingSpliter.py -- Use to get H&He, metal, and ee cooling( defined
 in Wang et al. 2013) from CLOUDY’s 'save cooling each' and 'save
 overview' outputs.
 
-DataGather.py -- Used to merge temporary files generate by 'grid'
+DataGather.py -- Use to merge temporary files generate by 'grid'
 command into a whole file.
+
+MultiCloudy.py -- Use to run cloudy when input variables need to be
+expressed as a function (such as log(T) + log(n_H) = 10). Run cloudy
+in a multiprocessing way.
