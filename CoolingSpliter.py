@@ -19,7 +19,7 @@ def Process(Cole, Ovr):
         
         OvrColumns = Ovr[LN].split('\t')
         ColeColumns = Cole[LN].split('\t')
-        if( len(OvrColumns) >= 5 and len(ColeColumns) >=51 ):
+        if( len(OvrColumns) >= 5 and len(ColeColumns) ==50 ):
             # hydrogen density
             hden = float(OvrColumns[3])
             # electron density
@@ -29,7 +29,7 @@ def Process(Cole, Ovr):
             metal_cooling = 0.
             eeff = 0.
             other_cooling = 0.
-            for i in range( 3, 49 ):
+            for i in range( 3, 50 ):
                 if( i == 3 or i == 4 or i == 35 or i == 36 or i == 37 or i ==38 or i == 39 or i == 40 or i == 41 or i == 45 or i == 48 ):
                     hhe_cooling += (float(ColeColumns[i])/(hden * eden))
                 elif( i == 33 or i == 34 or i == 44 or i == 46 or i == 47 ):
