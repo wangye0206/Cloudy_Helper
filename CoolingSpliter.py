@@ -19,7 +19,7 @@ def Process(Cole, Ovr):
         
         OvrColumns = Ovr[LN].split('\t')
         ColeColumns = Cole[LN].split('\t')
-        if( len(OvrColumns) >= 5 and len(ColeColumns) ==50 ):
+        if( len(OvrColumns) >= 5 and len(ColeColumns) == 50 ):
             # hydrogen density
             hden = float(OvrColumns[3])
             # electron density
@@ -113,15 +113,12 @@ def main():
         TempList = Result_Queue.get()
         OutputList = TempList[1]
         for LineNum in range( len(OutputList) ):
-            if( len(OutputList[LineNum]) == 1 ):
-                Output.write(OutputList[LineNum][0])
-            else:
-                for ColNum in range(7):
-                    Output.write('{:.4e}'.format(OutputList[LineNum][ColNum]))
-                    if( ColNum == 6):
-                        Output.write('\n')
-                    else:
-                        Output.write('\t')
+            for ColNum in range( len(OutputList[LineNum]) ):
+                Output.write('{:.4e}'.format(OutputList[LineNum][ColNum]))
+                if( ColNum == len(OutputList[LineNum]) - 1):
+                    Output.write('\n')
+                else:
+                    Output.write('\t')
     Output.close()
 
 if __name__ == "__main__":
