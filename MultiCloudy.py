@@ -89,6 +89,8 @@ class GatherThread(threading.Thread):
         GatherFile(self.suffix, self.model)
 
 def main():
+
+    # establish and launch calculation threads
     threads_c = []
     for i in range(Model_Num):
         thread_i = CalThread(i, Model_Name)
@@ -102,7 +104,8 @@ def main():
         if( i + 1 == Model_Num ):
             for k in threads_c:
                 k.join()
-                
+
+    # establish and launch gather threads
     threads_g = []
     for suffix in Extensions:
         thread_gather = GatherThread(suffix, Model_Name)
@@ -110,6 +113,11 @@ def main():
         thread_gather.start()
     for g in threads_g:
         g.join()
+    # gather output
+    stdoPath = './output/'
+    if( not os.path.exists(stdoPath) ):
+        os.makedirs(stdoPath)
+    subprocess.call('mv *.out {}'.format(stdoPath), shell=True)
 
     error = []
     while(not Error_Queue.empty()):
@@ -121,6 +129,8 @@ def main():
     for i in range(Model_Num):
         if( i not in error):
             os.remove('./grid{0:09d}_{1}.in'.format(i, Model_Name))
+
+    
     return 0
 
 if __name__ == "__main__":
