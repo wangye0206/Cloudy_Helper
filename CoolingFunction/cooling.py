@@ -59,7 +59,7 @@ def CoolingFunction(T, n, Z):
     lm_e = 3.00028e-28
     lm_f = 0.472682
 
-    Lambda_m = Z * (lm_e * math.pow(T,lm_f) + math.pow((lm_a * math.pow(T, lm_b) + lm_c * math.pow(T, lm_d)), -1))
+    Lambda_m = (lm_e * math.pow(T,lm_f) + math.pow((lm_a * math.pow(T, lm_b) + lm_c * math.pow(T, lm_d)), -1))
 
     # Eq 10 of Wang et al. 2013
     dm_a = 3.29383
@@ -70,15 +70,15 @@ def CoolingFunction(T, n, Z):
 	
     D_m = ( math.pow(T,dm_a) + dm_b * (dm_g1 * math.pow(n,3) + dm_g2 * math.pow(n,2) + dm_g3 * n + 1) )/( math.pow(T,dm_a) + dm_b )
 
-    # Eq 11 of Wang et al. 2013
-    Lambda_e = ((HIGH_T_ELECTRON_FRACTION * FINE_STRUCTURE_CONSTANT * THOMSON_CROSS_SECTION * math.pow(BOLTZMANN_CONSTANT,2))/(ELECTRON_MASS * LIGHT_SPEED)) * 2.63323 * math.pow(T,1.708064)
+    # Eq 13 of Wang et al. 2013
+    Lambda_e = ((HIGH_T_ELECTRON_FRACTION * FINE_STRUCTURE_CONSTANT * THOMSON_CROSS_SECTION * math.pow(BOLTZMANN_CONSTANT,2))/(ELECTRON_MASS * LIGHT_SPEED)) * 2.63323e3 * math.pow(T,1.708064)
 	
     me_a = 0.00769985
 
     # High Temperature Approximation of Eq 14 of Wang et al. 2013 
     M_e = me_a * (Z - 1) + 1
 
-    Lambda = D_h * Lambda_h +  D_m * Lambda_m + M_e * Lambda_e
+    Lambda = D_h * Lambda_h +  D_m * Z * Lambda_m + M_e * Lambda_e
 
     return Lambda
 

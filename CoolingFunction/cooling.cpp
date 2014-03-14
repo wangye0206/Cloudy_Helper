@@ -7,7 +7,7 @@ float Cooling::CoolingFunction(float T, float n, float Z)
 	
 	float Lambda;
 
-	/* Eq 6 of Wang et al. 2013 */
+	/* Eq 6 of Wang et al.2014 */
 	float lh_a = 4.86567e-13;
 	float lh_b = -2.21974;
 	float lh_c = 1.35332e-5;
@@ -23,21 +23,21 @@ float Cooling::CoolingFunction(float T, float n, float Z)
 
 	//printf("Lambda_h is %e\n", Lambda_h);
 
-	/* Eq 7 of Wang et al. 2013 */
+	/* Eq 7 of Wang et al.2014 */
 	float dh_a = 2.84738;
 	float dh_b = 3.62655e13;
-	float dh_g1 = -3.18564e-4;
-	float dh_g2 = 4.8323e-3;
-	float dh_g3 = -0.0225974;
-	float dh_g4 = 0.0245446;
+	float dh_g4 = -3.18564e-4;
+	float dh_g3 = 4.8323e-3;
+	float dh_g2 = -0.0225974;
+	float dh_g1 = 0.0245446;
 
-	float dh_g = dh_g1 * pow(n,4) + dh_g2 * pow(n,3) + dh_g3 * pow(n,2) + dh_g4 * n + 1;
+	float dh_g = dh_g4 * pow(n,4) + dh_g3 * pow(n,3) + dh_g2 * pow(n,2) + dh_g1 * n + 1;
 	
 	float D_h = ( pow(T,dh_a) + dh_b * dh_g )/( pow(T,dh_a) + dh_b );
 
 	//printf("D_h is %e\n", D_h);
 
-	/* Eq 9 of Wang et al. 2013 */
+	/* Eq 9 of Wang et al.2014 */
 	float lm_a = 6.88502e30;
 	float lm_b = -1.90262;
 	float lm_c = 2.48881e17;
@@ -49,30 +49,26 @@ float Cooling::CoolingFunction(float T, float n, float Z)
 
 	//printf("Lambda_m is %e\n", Lambda_m);
 
-	/* Eq 10 of Wang et al. 2013 */
+	/* Eq 10 of Wang et al.2014 */
 	float dm_a = 3.29383;
 	float dm_b = 8.82636e14;
-	float dm_g1 = 0.00221438;
+	float dm_g3 = 0.00221438;
 	float dm_g2 = -0.0353337;
-	float dm_g3 = 0.0524811;
+	float dm_g1 = 0.0524811;
 	
-	float D_m = ( pow(T,dm_a) + dm_b * (dm_g1 * pow(n,3) + dm_g2 * pow(n,2) + dm_g3 * n + 1) )/( pow(T,dm_a) + dm_b );
+	float D_m = ( pow(T,dm_a) + dm_b * (dm_g3 * pow(n,3) + dm_g2 * pow(n,2) + dm_g1 * n + 1) )/( pow(T,dm_a) + dm_b );
 
 	//printf("D_m is %e\n", D_m);
 
-	/* Eq 11 of Wang et al. 2013 */
+	/* Eq 11 of Wang et al.2014 */
 	float Lambda_e = ((HIGH_T_ELECTRON_FRACTION * FINE_STRUCTURE_CONSTANT * THOMSON_CROSS_SECTION * pow(BOLTZMANN_CONSTANT,2))/(ELECTRON_MASS * LIGHT_SPEED)) * 2.63323 * pow(T,1.708064);
-
-	//printf("Lambda_e is %e\n", Lambda_e);
 	
 	float me_a = 0.00769985;
 
-	/* High Temperature Approximation of Eq 14 of Wang et al. 2013 */
+	/* High Temperature Approximation of Eq 14 of Wang et al.2014 */
 	float M_e = me_a * (Z - 1) + 1;
 
-	//printf("M_e is %e\n", M_e);
-
-	Lambda = D_h * Lambda_h +  D_m * Lambda_m + M_e * Lambda_e;
+	Lambda = D_h * Lambda_h +  Z * D_m * Lambda_m + M_e * Lambda_e;
 
 	return Lambda;
 }
@@ -84,16 +80,15 @@ float Cooling::CoolingRate(float T, float n, float Z)
 	float rate;
 	float Lambda = CoolingFunction(T, n, Z);
 
-	/* Election fraction, Eq 12 of Wang et al. 2013 */
+	/* Election fraction, Eq 12 of Wang et al.2014 */
 	float E = 2.1792 - exp(3966.27/T);
 	float a = 0.00769985;
 	float b = 24683.1;
 	float c = 0.805234;
 
-	/* Eq 14 of Wang et al. 2013 */
+	/* Eq 14 of Wang et al.2014 */
 	float M = ((a * Z - a + 1) * pow(T,c) + b)/(pow(T,c) + b);
 
-	//printf("E is %f, M is %f\n",E,M);
 
 	rate = E * M * pow(pow(10,n),2) * Lambda;
 

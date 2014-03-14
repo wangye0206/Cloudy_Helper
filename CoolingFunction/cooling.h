@@ -1,5 +1,5 @@
-#ifndef COOLING_WANG13_H
-#define COOLING_WANG13_H
+#ifndef COOLING_H_
+#define COOLING_H_
 
 #include "stdio.h"
 #include "math.h"
