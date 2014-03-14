@@ -25,7 +25,7 @@ def CoolingFunction(T, n, Z):
     HIGH_T_ELECTRON_FRACTION = 1.1792
 
 
-    # Eq 6 of Wang et al. 2013 
+    # Eq 6 of Wang et al.2014 
     lh_a = 4.86567e-13
     lh_b = -2.21974
     lh_c = 1.35332e-5
@@ -39,7 +39,7 @@ def CoolingFunction(T, n, Z):
 
     Lambda_h = (lh_a * math.pow(T,lh_b) + math.pow(lh_c * T,lh_d)*(lh_e * math.pow(T,lh_f) + lh_g * math.pow(T,lh_h))) / (1 + math.pow(lh_c * T, lh_d)) + lh_i * math.pow(T,lh_j)
 
-    # Eq 7 of Wang et al. 2013 
+    # Eq 7 of Wang et al.2014 
     dh_a = 2.84738
     dh_b = 3.62655e13
     dh_g1 = -3.18564e-4
@@ -51,7 +51,7 @@ def CoolingFunction(T, n, Z):
 	
     D_h = ( math.pow(T,dh_a) + dh_b * dh_g )/( math.pow(T,dh_a) + dh_b )
 
-    # Eq 9 of Wang et al. 2013 
+    # Eq 9 of Wang et al.2014 
     lm_a = 6.88502e30
     lm_b = -1.90262
     lm_c = 2.48881e17
@@ -61,7 +61,7 @@ def CoolingFunction(T, n, Z):
 
     Lambda_m = (lm_e * math.pow(T,lm_f) + math.pow((lm_a * math.pow(T, lm_b) + lm_c * math.pow(T, lm_d)), -1))
 
-    # Eq 10 of Wang et al. 2013
+    # Eq 10 of Wang et al.2014
     dm_a = 3.29383
     dm_b = 8.82636e14
     dm_g1 = 0.00221438
@@ -70,12 +70,12 @@ def CoolingFunction(T, n, Z):
 	
     D_m = ( math.pow(T,dm_a) + dm_b * (dm_g1 * math.pow(n,3) + dm_g2 * math.pow(n,2) + dm_g3 * n + 1) )/( math.pow(T,dm_a) + dm_b )
 
-    # Eq 13 of Wang et al. 2013
+    # Eq 13 of Wang et al.2014
     Lambda_e = ((HIGH_T_ELECTRON_FRACTION * FINE_STRUCTURE_CONSTANT * THOMSON_CROSS_SECTION * math.pow(BOLTZMANN_CONSTANT,2))/(ELECTRON_MASS * LIGHT_SPEED)) * 2.63323e3 * math.pow(T,1.708064)
 	
     me_a = 0.00769985
 
-    # High Temperature Approximation of Eq 14 of Wang et al. 2013 
+    # High Temperature Approximation of Eq 14 of Wang et al.2014 
     M_e = me_a * (Z - 1) + 1
 
     Lambda = D_h * Lambda_h +  D_m * Z * Lambda_m + M_e * Lambda_e
@@ -86,13 +86,13 @@ def CoolingFunction(T, n, Z):
 def CoolingRate(T, n, Z):
     Lambda = CoolingFunction(T, n, Z)
     
-    # Election fraction, Eq 12 of Wang et al. 2013
+    # Election fraction, Eq 12 of Wang et al.2014
     E = 2.1792 - math.exp(3966.27/T)
     a = 0.00769985
     b = 24683.1
     c = 0.805234
 
-    # Eq 14 of Wang et al. 2013
+    # Eq 14 of Wang et al.2014
     M = ((a * Z - a + 1) * math.pow(T,c) + b)/(math.pow(T,c) + b)
 
     rate = E * M * math.pow(math.pow(10,n),2) * Lambda
